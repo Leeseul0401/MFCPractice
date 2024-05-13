@@ -5,6 +5,7 @@
 #include "MFCApplication3Dlg.h"
 #include "afxdialogex.h"
 #include "SubDlg.h"
+#include "SubEditDlg.h"
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -70,7 +71,7 @@ void CMFCApplication3Dlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CMFCApplication3Dlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &CMFCApplication3Dlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON1, &CMFCApplication3Dlg::OnDeleteButton)
 	ON_BN_CLICKED(IDC_BUTTON3, &CMFCApplication3Dlg::OnBnClickedButton3)
 	ON_CBN_SELCHANGE(IDC_COMBO2, &CMFCApplication3Dlg::OnCbnSelchangeCombo2)
 	ON_EN_CHANGE(IDC_EDIT1, &CMFCApplication3Dlg::OnEnChangeEdit1)
@@ -89,10 +90,10 @@ BEGIN_MESSAGE_MAP(CMFCApplication3Dlg, CDialogEx)
 	ON_LBN_SELCHANGE(IDC_LIST1, &CMFCApplication3Dlg::OnLbnSelchangeList1)
 	ON_BN_CLICKED(IDC_BUTTON5, &CMFCApplication3Dlg::OnBnClickedButton5)
 	ON_BN_CLICKED(IDC_BUTTON2, &CMFCApplication3Dlg::OnBnClickedButton2)
-	ON_BN_CLICKED(IDC_BUTTON7, &CMFCApplication3Dlg::OnBnClickedButton7)
+	ON_BN_CLICKED(IDC_BUTTON7, &CMFCApplication3Dlg::OnSaveButton)
 	ON_EN_CHANGE(IDC_EDIT3, &CMFCApplication3Dlg::OnEnChangeEdit3)
-	ON_BN_CLICKED(IDC_BUTTON6, &CMFCApplication3Dlg::OnBnClickedButton6)
-	ON_BN_CLICKED(IDC_BUTTON8, &CMFCApplication3Dlg::OnBnClickedButton8)
+	ON_BN_CLICKED(IDC_BUTTON6, &CMFCApplication3Dlg::OnSubDlgButton)
+	ON_BN_CLICKED(IDC_BUTTON8, &CMFCApplication3Dlg::ComboBoxOptionPlusClickedButton)
 END_MESSAGE_MAP()
 
 
@@ -156,7 +157,6 @@ BOOL CMFCApplication3Dlg::OnInitDialog()
 	SetDlgItemText(IDC_CHECK3, _T("desk"));
 	CString str;
 
-	
 	SetDlgItemText(IDC_LIST1, str);
 	vscroll.SetScrollRange(0, 255);
 	hscroll.SetScrollRange(0, 255);
@@ -180,6 +180,9 @@ BOOL CMFCApplication3Dlg::OnInitDialog()
 	CString fileName;
 	fileName = _T("Data_default.txt");
 
+	CString comboBoxOption = _T("default");
+	FileWrite(0, comboBoxOption, fileName);
+	
 	CString strFilePath = strCurDir + fileName;
 	FileLoad(0, strFilePath);
 
@@ -234,7 +237,7 @@ void CMFCApplication3Dlg::OnBnClickedButton3()
 	SetTimer(1, num, NULL);
 }
 
-void CMFCApplication3Dlg::OnBnClickedButton1()
+void CMFCApplication3Dlg::OnDeleteButton()
 {
 	int index = comboBox.GetCurSel();
 	if (index != 0) {
@@ -426,6 +429,8 @@ void CMFCApplication3Dlg::OnCbnSelchangeCombo2()
 	result.Format(_T("combo Box ---- %s"), str);
 	cListBox.InsertString(-1, result);
 	cListBox.SetTopIndex(cListBox.GetCount() - 1);
+
+
 }
 
 void CMFCApplication3Dlg::OnBnClickedRadio1()
@@ -440,12 +445,7 @@ void CMFCApplication3Dlg::OnBnClickedRadio1()
 		checkBox2.ShowWindow(SW_SHOW);
 		checkBox3.ShowWindow(SW_SHOW);
 
-		CString str;
-		radio1.GetWindowTextW(str);
-		CString result;
-		result.Format(_T("Radio Box ---- %s"), str);
-		cListBox.InsertString(-1, result);
-		cListBox.SetTopIndex(cListBox.GetCount() - 1);
+		ListBoxLog(_T("Radio Box ---- %s"), radio1);
 	}
 }
 
@@ -458,12 +458,8 @@ void CMFCApplication3Dlg::OnBnClickedCheck1()
 	if (checkBox1.GetCheck() == BST_CHECKED)
 	{
 		GetDlgItemText(IDC_CHECK1, msg);
-		CString str;
-		checkBox1.GetWindowTextW(str);
-		CString result;
-		result.Format(_T("check Box ---- %s"), str);
-		cListBox.InsertString(-1, result);
-		cListBox.SetTopIndex(cListBox.GetCount() - 1);
+
+		ListBoxLog(_T("check Box ---- %s"), checkBox1);
 	}
 
 	checkEdit.SetWindowTextW(msg);
@@ -488,23 +484,14 @@ void CMFCApplication3Dlg::OnEnChangeEdit4()
 }
 
 
-
-
-
-
 void CMFCApplication3Dlg::OnBnClickedCheck2()
 {
 	CString msg;
 	if (checkBox2.GetCheck() == BST_CHECKED)
 	{
 		GetDlgItemText(IDC_CHECK2, msg);
-
-		CString str;
-		checkBox2.GetWindowTextW(str);
-		CString result;
-		result.Format(_T("check Box ---- %s"), str);
-		cListBox.InsertString(-1, result);
-		cListBox.SetTopIndex(cListBox.GetCount() - 1);
+		ListBoxLog(_T("check Box ---- %s"), checkBox2);
+		
 	}
 
 	checkEdit.SetWindowTextW(msg);
@@ -518,12 +505,7 @@ void CMFCApplication3Dlg::OnBnClickedCheck3()
 	{
 		GetDlgItemText(IDC_CHECK3, msg);
 
-		CString str;
-		checkBox3.GetWindowTextW(str);
-		CString result;
-		result.Format(_T("check Box ---- %s"), str);
-		cListBox.InsertString(-1, result);
-		cListBox.SetTopIndex(cListBox.GetCount() - 1);
+		ListBoxLog(_T("check Box ---- %s"), checkBox3);
 
 	}
 
@@ -539,14 +521,7 @@ void CMFCApplication3Dlg::OnBnClickedRadio2()
 		checkBox2.ShowWindow(SW_HIDE);
 		checkBox3.ShowWindow(SW_HIDE);
 
-
-		//int index = comboBox.GetCurSel();
-		CString str;
-		radio2.GetWindowTextW(str);
-		CString result;
-		result.Format(_T("Radio Box ---- %s"), str);
-		cListBox.InsertString(-1, result);
-		cListBox.SetTopIndex(cListBox.GetCount() - 1);
+		ListBoxLog(_T("Radio Box ---- %s"), radio2);
 	}
 }
 
@@ -564,12 +539,7 @@ void CMFCApplication3Dlg::OnBnClickedRadio3()
 		checkBox2.ShowWindow(SW_SHOW);
 		checkBox3.ShowWindow(SW_SHOW);
 
-		CString str;
-		radio3.GetWindowTextW(str);
-		CString result;
-		result.Format(_T("Radio Box ---- %s"), str);
-		cListBox.InsertString(-1, result);
-		cListBox.SetTopIndex(cListBox.GetCount() - 1);
+		ListBoxLog(_T("Radio Box ---- %s"), radio3);
 	}
 }
 
@@ -602,12 +572,7 @@ void CMFCApplication3Dlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 
 	if (nSBCode == SB_ENDSCROLL)
 	{
-		CString listStr;
-		hscrollEdit.GetWindowTextW(listStr);
-		CString result;
-		result.Format(_T("가로 스크롤바 ---- %s"), listStr);
-		cListBox.InsertString(-1, result);
-		cListBox.SetTopIndex(cListBox.GetCount() - 1);
+		ListBoxLog(_T("가로 스크롤바 ---- %s"), hscrollEdit);
 	}
 }
 
@@ -665,12 +630,8 @@ void CMFCApplication3Dlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 
 	if (nSBCode == SB_ENDSCROLL)
 	{
-		CString listStr;
-		vscrollEdit.GetWindowTextW(listStr);
-		CString result;
-		result.Format(_T("세로 스크롤바 ---- %s"), listStr);
-		cListBox.InsertString(-1, result);
-		cListBox.SetTopIndex(cListBox.GetCount() - 1);
+		
+		ListBoxLog(_T("세로 스크롤바 ---- %s"), vscrollEdit);
 	}
 }
 
@@ -735,7 +696,7 @@ void CMFCApplication3Dlg::OnBnClickedButton2()
 
 
 
-void CMFCApplication3Dlg::OnBnClickedButton7()
+void CMFCApplication3Dlg::OnSaveButton()
 {
 	int index = comboBox.GetCurSel();
 	//int radio = comboBox.SetItemData(index, )
@@ -813,6 +774,28 @@ void CMFCApplication3Dlg::OnBnClickedButton7()
 	// 파일 출력 코드 추가
 	CString strCombo;
 	CString fileName;
+	FileWrite(index, strCombo, fileName);
+
+	//std::ofstream outputFile(fileName); // 출력 파일 열기
+	//std::ifstream inputFile("Data.ini");
+
+	/*
+	if (outputFile.is_open()) {
+
+		outputFile.close(); // 파일 닫기
+		AfxMessageBox(_T("save"), MB_OK | MB_ICONINFORMATION);
+	}
+	else 
+	{
+		AfxMessageBox(_T("출력 파일을 열 수 없습니다."), MB_OK | MB_ICONERROR);
+	}
+	*/
+
+	
+}
+
+void CMFCApplication3Dlg::FileWrite(int index, CString strCombo, CString fileName)
+{
 	comboBox.GetLBText(index, strCombo);
 	fileName = _T("Data_") + strCombo + _T(".txt");
 
@@ -836,42 +819,53 @@ void CMFCApplication3Dlg::OnBnClickedButton7()
 		}
 	}
 	file.Close();
-
-	//std::ofstream outputFile(fileName); // 출력 파일 열기
-	//std::ifstream inputFile("Data.ini");
-
-	/*
-	if (outputFile.is_open()) {
-
-		outputFile.close(); // 파일 닫기
-		AfxMessageBox(_T("save"), MB_OK | MB_ICONINFORMATION);
-	}
-	else 
-	{
-		AfxMessageBox(_T("출력 파일을 열 수 없습니다."), MB_OK | MB_ICONERROR);
-	}
-	*/
-
-	
 }
 
 
+void CMFCApplication3Dlg::ListBoxLog(CString menu, CWnd& button)
+{
+	CString str;
+	button.GetWindowTextW(str);
+	CString result;
+	result.Format(menu, str);
+	cListBox.InsertString(-1, result);
+	cListBox.SetTopIndex(cListBox.GetCount() - 1);
+}
 void CMFCApplication3Dlg::OnEnChangeEdit3()
 {
 }
 
 
-void CMFCApplication3Dlg::OnBnClickedButton6()
+void CMFCApplication3Dlg::OnSubDlgButton()
 {
 	SubDlg* subDlg = new SubDlg(this);
 	subDlg->Create(IDD_SubDlg, this);
 	subDlg->ShowWindow(SW_SHOW);
 }
-void CMFCApplication3Dlg::OnBnClickedButton8()
-{
-	CString str;
-	comboBox.GetWindowTextW(str);
-	comboBox.AddString(str);
-	AfxMessageBox(str + _T("이/가 추가되었습니다."), MB_OK | MB_ICONINFORMATION);
+void CMFCApplication3Dlg::ComboBoxOptionPlusClickedButton()
+{	
+
+	
+	CString newOption;
+	comboBox.GetWindowTextW(newOption);
+	
+	int index = comboBox.FindStringExact(-1, newOption);
+	if (index == CB_ERR) 
+	{
+		comboBox.AddString(newOption);
+		comboBox.SelectString(-1, newOption);
+		AfxMessageBox(newOption + _T("이/가 추가되었습니다."), MB_OK | MB_ICONINFORMATION);
+
+	} 
+	else
+	{
+		comboBox.SetCurSel(index);
+	}
+	
+
+	/*SubEditDlg* subEditDlg = new SubEditDlg(this);
+	subEditDlg->Create(IDD_DIALOG1, this);
+	subEditDlg->ShowWindow(SW_SHOW);*/
+	
 
 }

@@ -33,6 +33,9 @@
     <ClInclude Include="SubDlg.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="SubEditDlg.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication3.cpp">
@@ -47,6 +50,9 @@
     <ClCompile Include="SubDlg.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="SubEditDlg.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MFCApplication3.rc">
@@ -58,6 +64,9 @@
       <Filter>리소스 파일</Filter>
     </None>
     <None Include="res\ribbon1.mfcribbon-ms">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="res\idd_dial.bin">
       <Filter>리소스 파일</Filter>
     </None>
   </ItemGroup>
